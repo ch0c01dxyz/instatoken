@@ -1,0 +1,39 @@
+{
+	"name": "ch0c01dxyz/instatoken",
+	"type": "library",
+	"description": "Just simple Instagram API using Token provided by Application",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Egar Rizki",
+			"email": "ch0c01d.xyz@gmail.com"
+		}
+	],
+	"require": {
+		"php": "^7.1.3",
+		"php-http/client-implementation": "^1.0",
+		"php-http/discovery": "^1.3",
+		"php-http/httplug": "^1.1",
+		"php-http/message-factory": "^1.0",
+		"php-http/multipart-stream-builder": "^1.0"
+	},
+	"require-dev": {
+		"php-http/guzzle6-adapter": "^1.1",
+		"php-http/message": "^1.6",
+		"php-http/mock-client": "^1.1",
+		"phpunit/phpunit": "^7.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Ch0c01dxyz\\InstaToken\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Ch0c01dxyz\\Tests\\InstaToken\\": "tests/"
+		}
+	},
+	"version": "1.0.0",
+	"minimum-stability": "dev",
+	"prefer-stable": true
+}
