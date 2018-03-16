@@ -75,7 +75,7 @@ class Media implements MediaInterface
 	 */
 	public function readMedia ( MediaId $mediaId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new MediaException ( "Current param isn't Instance of MediaId" );
 		}
@@ -103,7 +103,7 @@ class Media implements MediaInterface
 	 */
 	public function infoMedia ( ShortCode $shortCode ) : array
 	{
-		if ( false == ( $shortCode instanceof ShortCode ) )
+		if ( false === ( $shortCode instanceof ShortCode ) )
 		{
 			throw new MediaException ( "Current param isn't Instance Of ShortCode." );
 		}
@@ -131,7 +131,7 @@ class Media implements MediaInterface
 	 */
 	public function searchMedia ( Map $map ) : array
 	{
-		if ( false == ( $map instanceof Map ) )
+		if ( false === ( $map instanceof Map ) )
 		{
 			throw new MediaException ( "Current param isn't Instance of Map." );
 		}

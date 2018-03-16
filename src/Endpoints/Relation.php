@@ -166,7 +166,7 @@ class Relation implements RelationInterface
 	 */
 	public function getRelation ( UserId $userId ) : array
 	{
-		if ( false == ( $userId instanceof UserId ) )
+		if ( false === ( $userId instanceof UserId ) )
 		{
 			throw new RelationException ( "Current param isn't instance of UserId." );
 		}
@@ -196,12 +196,12 @@ class Relation implements RelationInterface
 	 */
 	public function changeRelation ( UserId $userId, Action $action ) : array
 	{
-		if ( false == ( $action instanceof Action ) )
+		if ( false === ( $action instanceof Action ) )
 		{
 			throw new RelationException ( "Current param isn't instance of Action." );
 		}
 
-		if ( false == ( $userId instanceof UserId ) )
+		if ( false === ( $userId instanceof UserId ) )
 		{
 			throw new RelationException ( "Current param isn't instance of UserId." );
 		}

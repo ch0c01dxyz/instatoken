@@ -46,13 +46,11 @@ class TestRelation extends TestCase
 
 	public function testCanGetObjectActionInstance ()
 	{
-		$action = new Action ( 1 );
+		$action = new Action ( "unfollow" );
 
 		$this->assertInternalType ( "object", $action );
 
 		$this->assertInstanceOf ( Action::class, $action );
-
-		$this->assertEquals ( 1, $action->__toInt() );
 
 		$this->assertEquals ( "unfollow", $action->__toString () );
 	}
@@ -147,7 +145,7 @@ class TestRelation extends TestCase
 
 		$this->assertInstanceOf ( UserId::class, $userId );
 
-		$action = new Action ( 0 );
+		$action = new Action ( "ignore" );
 
 		$this->assertInternalType ( "object", $action );
 

@@ -15,36 +15,13 @@ class Action
 	protected $action;
 
 	/**
-	 * @var listAction
-	 */
-	protected $listAction = [
-		"follow",
-		"unfollow",
-		"approve",
-		"ignore"
-	];
-
-	/**
 	 * Action constructor
 	 *
-	 * @param int $ac
+	 * @param string $ac
 	 */
-	public function __construct ( int $ac )
+	public function __construct ( string $action )
 	{
-		$this->action = $this->listAction[ $ac ];
-	}
-
-	/**
-	 * @return int
-	 */
-	public function __toInt () : int
-	{
-		if ( is_string ( $this->action ) )
-		{
-			return array_search ( $this->action, $this->listAction );
-		}
-
-		return $this->action;
+		$this->action = $action;
 	}
 
 	/**
@@ -52,11 +29,6 @@ class Action
 	 */
 	public function __toString () : string
 	{
-		if ( is_int ( $this->action ) )
-		{
-			return $this->listAction[ $this->action ];
-		}
-
 		return $this->action;
 	}
 }

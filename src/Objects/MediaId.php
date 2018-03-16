@@ -17,11 +17,11 @@ class MediaId
 	/**
 	 * Media ID constructor
 	 *
-	 * @param string $mid
+	 * @param string $mediaId
 	 */
-	public function __construct ( string $mid )
+	public function __construct ( string $mediaId )
 	{
-		$this->mediaId = $mid;
+		$this->mediaId = $mediaId;
 	}
 
 	/**

@@ -70,7 +70,7 @@ class Tag implements TagInterface
 	 */
 	public function listTag ( TagName $tagName ) : array
 	{
-		if ( false == ( $tagName instanceof TagName ) )
+		if ( false === ( $tagName instanceof TagName ) )
 		{
 			throw new TagException ( "Current param isn't instance of TagName." );
 		}
@@ -99,7 +99,7 @@ class Tag implements TagInterface
 	 */
 	public function infoTag ( TagName $tagName ) : array
 	{
-		if ( false == ( $tagName instanceof TagName ) )
+		if ( false === ( $tagName instanceof TagName ) )
 		{
 			throw new TagException ( "Current param isn't instance of TagName." );
 		}
@@ -128,7 +128,7 @@ class Tag implements TagInterface
 	 */
 	public function searchTag ( TagName $tagName ) : array
 	{
-		if ( false == ( $tagName instanceof TagName ) )
+		if ( false === ( $tagName instanceof TagName ) )
 		{
 			throw new TagException ( "Current param isn't instance of TagName." );
 		}

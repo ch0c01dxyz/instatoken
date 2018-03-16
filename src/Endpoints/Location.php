@@ -74,7 +74,7 @@ class Location implements LocationInterface
 	 */
 	public function infoLocation ( LocationId $locationId ) : array
 	{
-		if ( false == ( $locationId instanceof LocationId ) )
+		if ( false === ( $locationId instanceof LocationId ) )
 		{
 			throw new LocationException ( "Current param isn't instance of LocationId." );
 		}
@@ -102,7 +102,7 @@ class Location implements LocationInterface
 	 */
 	public function listMediaLocation ( LocationId $locationId ) : array
 	{
-		if ( false == ( $locationId instanceof LocationId ) )
+		if ( false === ( $locationId instanceof LocationId ) )
 		{
 			throw new LocationException ( "Current param isn't instce of LocationId." );
 		}
@@ -130,7 +130,7 @@ class Location implements LocationInterface
 	 */
 	public function searchLocation ( Map $map ) : array
 	{
-		if ( false == ( $map instanceof Map ) )
+		if ( false === ( $map instanceof Map ) )
 		{
 			throw new LocationException ( "Current param isn't instance of Map." );
 		}

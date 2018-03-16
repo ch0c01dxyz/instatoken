@@ -82,7 +82,7 @@ class Comment implements CommentInterface
 	 */
 	public function listComment ( MediaId $mediaId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}
@@ -110,7 +110,7 @@ class Comment implements CommentInterface
 	 */
 	public function sendComment ( MediaId $mediaId, string $comment ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}
@@ -148,12 +148,12 @@ class Comment implements CommentInterface
 	 */
 	public function deleteComment ( MediaId $mediaId, CommentId $commentId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}
 
-		if ( false == ( $commentId instanceof CommentId ) )
+		if ( false === ( $commentId instanceof CommentId ) )
 		{
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}

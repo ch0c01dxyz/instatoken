@@ -97,7 +97,7 @@ class User implements UserInterface
 	 */
 	public function getInfo ( UserId $userId ) : array
 	{
-		if ( false == ( $userId instanceof UserId ) )
+		if ( false === ( $userId instanceof UserId ) )
 		{
 			throw new UserException ( "Current param isn't instance of UserId." );
 		}
@@ -172,7 +172,7 @@ class User implements UserInterface
 	 */
 	public function searchUser ( Name $name ) : array
 	{
-		if ( false == ( $name instanceof Name ) )
+		if ( false === ( $name instanceof Name ) )
 		{
 			throw new UserException ( "Current param isn't instance of Name Class." );
 		}
@@ -200,7 +200,7 @@ class User implements UserInterface
 	 */
 	public function readUserMedia ( UserId $userId ) : array
 	{
-		if ( false == ( $userId instanceof UserId ) )
+		if ( false === ( $userId instanceof UserId ) )
 		{
 			throw new UserException ( "Current param isn't instance of UserId Class." );
 		}

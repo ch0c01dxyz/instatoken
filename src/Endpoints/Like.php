@@ -82,7 +82,7 @@ class Like implements LikeInterface
 	 */
 	public function listLike ( MediaId $mediaId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new LikeException ( "Current param isn't instance of MediaId." );
 		}
@@ -111,7 +111,7 @@ class Like implements LikeInterface
 	 */
 	public function sendLike ( MediaId $mediaId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new LikeException ( "Current param isn't instance of MediaId." );
 		}
@@ -144,7 +144,7 @@ class Like implements LikeInterface
 	 */
 	public function deleteLike ( MediaId $mediaId ) : array
 	{
-		if ( false == ( $mediaId instanceof MediaId ) )
+		if ( false === ( $mediaId instanceof MediaId ) )
 		{
 			throw new LikeException ( "Current param isn't instance of MediaId." );
 		}
