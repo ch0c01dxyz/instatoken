@@ -2,6 +2,7 @@
 Just simple Unofficial Instagram API using Token provided by Application
 
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.0-8892BF.svg?style=flat-square)](https://php.net/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ch0c01dxyz/instatoken/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ch0c01dxyz/instatoken/?branch=master)
 
 ## Features
 
