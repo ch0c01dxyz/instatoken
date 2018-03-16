@@ -1,10 +1,11 @@
 # InstaToken
 Just simple Unofficial Instagram API using Token provided by Application
 
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
+[![PHP from Travis config](https://img.shields.io/travis/php-v/ch0c01dxyz/instatoken.svg)](https://github.com/ch0c01dxyz/instatoken)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ch0c01dxyz/instatoken/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ch0c01dxyz/instatoken/?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/ndb32qj5ablfxpb9?svg=true)](https://ci.appveyor.com/project/ch0c01dxyz/instatoken)
 [![Build Status](https://travis-ci.org/ch0c01dxyz/instatoken.svg?branch=master)](https://travis-ci.org/ch0c01dxyz/instatoken)
+[![Repository License](https://img.shields.io/badge/license-BSD--3--Clause-brightgreen.svg)](https://github.com/ch0c01dxyz/instatoken)
 
 ## Features
 
