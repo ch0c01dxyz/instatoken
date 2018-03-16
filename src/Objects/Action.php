@@ -39,12 +39,12 @@ class Action
 	 */
 	public function __toInt () : int
 	{
-		if ( is_string ( $this->mediaId ) )
+		if ( is_string ( $this->action ) )
 		{
-			return array_search ( $this->mediaId, $this->listAction );
+			return array_search ( $this->action, $this->listAction );
 		}
 
-		return $this->mediaId;
+		return $this->action;
 	}
 
 	/**
@@ -52,11 +52,11 @@ class Action
 	 */
 	public function __toString () : string
 	{
-		if ( is_int ( $this->mediaId ) )
+		if ( is_int ( $this->action ) )
 		{
-			return $this->listAction[ $this->mediaId ];
+			return $this->listAction[ $this->action ];
 		}
 
-		return $this->mediaId;
+		return $this->action;
 	}
 }

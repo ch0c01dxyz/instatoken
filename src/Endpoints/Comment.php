@@ -87,7 +87,7 @@ class Comment implements CommentInterface
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments?access_token=%s", ( int ) $mediaId, $this->accessToken );
+		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments?access_token=%s", $mediaId, $this->accessToken );
 
 		$request = $this->requestFactory->createRequest ( "GET", $uri );
 
@@ -120,8 +120,9 @@ class Comment implements CommentInterface
 			throw new CommentException ( "Comment required." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments?access_token=", $mediaId, $this->accessToken );
+		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments", $mediaId );
 
+		$this->builder->addResource ( "access_token", $this->accessToken );
 		$this->builder->addResource ( "text", $comment );
 
 		$request = $this->requestFactory->createRequest ( "POST", $uri, [
@@ -157,7 +158,7 @@ class Comment implements CommentInterface
 			throw new CommentException ( "Current param isn't instance of MediaId." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments/%s?access_token=", $mediaId, $commentId, $this->accessToken );
+		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments/%s?access_token=%s", $mediaId->__toString (), $commentId->__toInt (), $this->accessToken );
 
 		$request = $this->requestFactory->createRequest ( "DELETE", $uri );
 

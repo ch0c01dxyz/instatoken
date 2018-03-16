@@ -4,7 +4,7 @@ declare ( strict_types = 1 );
 
 namespace Ch0c01dxyz\InstaToken\Interfaces;
 
-use Ch0c01dxyz\InstaToken\Objects;
+use Ch0c01dxyz\InstaToken\Objects\TagName;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>

@@ -9,9 +9,10 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
-use Ch0c01dxyz\InstaToken\Objects;
-use Ch0c01dxyz\InstaToken\Interfaces;
-use Ch0c01dxyz\InstaToken\Exceptions;
+use Ch0c01dxyz\InstaToken\Objects\AccessToken;
+use Ch0c01dxyz\InstaToken\Objects\MediaId;
+use Ch0c01dxyz\InstaToken\Interfaces\LikeInterface;
+use Ch0c01dxyz\InstaToken\Exceptions\LikeException;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
@@ -148,13 +149,9 @@ class Like implements LikeInterface
 			throw new LikeException ( "Current param isn't instance of MediaId." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/likes", $mediaId );
+		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/likes?access_token=%s", $mediaId->__toString (), $this->accessToken );
 
-		$this->builder->addResource ( "access_token", $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "DELETE", $uri, [
-			"Content-Type" => 'multipart/form-data; boundary="' . $this->builder->getBoundary () . '"'
-		], ( string ) $this->builder->build () );
+		$request = $this->requestFactory->createRequest ( "DELETE", $uri );
 
 		$response = $this->httpClient->sendRequest ( $request );
 

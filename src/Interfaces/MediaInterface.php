@@ -16,6 +16,7 @@ interface MediaInterface
 	/**
 	 * Get Information from given Media
 	 *
+	 * @param object MediaId $mediaId
 	 * @return array
 	 */
 	public function readMedia ( MediaId $mediaId ) : array;
@@ -23,6 +24,7 @@ interface MediaInterface
 	/**
 	 * Get Information from given Shortcoded Media
 	 *
+	 * param objet ShortCode $shortCode
 	 * @return array
 	 */
 	public function infoMedia ( ShortCode $shortCode ) : array;
@@ -30,6 +32,7 @@ interface MediaInterface
 	/**
 	 * Search recent Media from given Area
 	 *
+	 * param object Map $map
 	 * @return array
 	 */
 	public function searchMedia ( Map $map ) : array;

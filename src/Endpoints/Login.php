@@ -65,13 +65,15 @@ class Login implements LoginInterface
 	 * @param \Http\Client\HttpClient|null $httpClient
 	 * @param \Http\Message\RequestFactory|null $requestFactory
 	 */
-	public function __construct ( string $appId, string $appSecret, string $appCallback, HttpClient $httpClient = null, RequestFactory $requestFactory = null )
+	public function __construct ( string $appId, string $appSecret, string $appCallback, string $appScope, HttpClient $httpClient = null, RequestFactory $requestFactory = null )
 	{
 		$this->appId = ( string ) $appId;
 
 		$this->appSecret = ( string ) $appSecret;
 
 		$this->appCallback = ( string ) $appCallback;
+
+		$this->appScope = ( string ) $appScope;
 
 		$this->httpClient = $httpClient ?: HttpClientDiscovery::find ();
 
@@ -93,7 +95,7 @@ class Login implements LoginInterface
 			throw new LoginException ( "AppScope required." );
 		}
 
-		return "https://api.instagram.com/oauth/authorize/?client_id=" . $this->appId . "&redirect_uri" . $this->appCallback . "&response_type=code" . "&scope=" . $this->appScope;
+		return "https://api.instagram.com/oauth/authorize/?client_id=" . $this->appId . "&redirect_uri=" . $this->appCallback . "&response_type=code" . "&scope=" . $this->appScope;
 	}
 
 	/**

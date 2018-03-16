@@ -102,7 +102,7 @@ class User implements UserInterface
 			throw new UserException ( "Current param isn't instance of UserId." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/?access_token=%s", ( string ) $this->userId->__toInt(), $this->accessToken );
+		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/?access_token=%s", ( string ) $userId->__toInt(), $this->accessToken );
 
 		$request = $this->requestFactory->createRequest ( "GET", $uri );
 

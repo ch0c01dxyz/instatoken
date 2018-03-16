@@ -22,6 +22,7 @@ interface UserInterface
 	/**
 	 * Get User Information from UserId
 	 *
+	 * param object UserId $userId
 	 * @return array
 	 */
 	public function getInfo ( UserId $userId ) : array;

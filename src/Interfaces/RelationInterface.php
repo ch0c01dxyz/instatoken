@@ -4,6 +4,7 @@ declare ( strict_types = 1 );
 
 namespace Ch0c01dxyz\InstaToken\Interfaces;
 
+use Ch0c01dxyz\InstaToken\Objects\UserId;
 use Ch0c01dxyz\InstaToken\Objects\Action;
 
 /**
@@ -35,15 +36,17 @@ interface RelationInterface
 	/**
 	 * Get User Relationship
 	 *
+	 * param object UserId $userId
 	 * @return array
 	 */
-	public function getRelation () : array;
+	public function getRelation ( UserId $userId ) : array;
 
 	/**
 	 * Change user Relationship
 	 *
+	 * @param object UserId $userId
 	 * @param object Action $action
 	 * @return array
 	 */
-	public function changeRelation ( Action $action ) : array;
+	public function changeRelation ( UserId $userId, Action $action ) : array;
 }

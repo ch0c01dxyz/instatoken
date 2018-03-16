@@ -11,6 +11,7 @@ use Http\Message\RequestFactory;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 use Ch0c01dxyz\InstaToken\Objects\AccessToken;
 use Ch0c01dxyz\InstaToken\Objects\UserId;
+use Ch0c01dxyz\InstaToken\Objects\Action;
 use Ch0c01dxyz\InstaToken\Interfaces\RelationInterface;
 use Ch0c01dxyz\InstaToken\Exceptions\RelationException;
 
@@ -90,46 +91,6 @@ class Relation implements RelationInterface
 	}
 
 	/**
-	 * UserId Setter
-	 *
-	 * @param int $userid
-	 */
-	public function setUserId ( int $userid )
-	{
-		$this->userId = new UserId ( $userid );
-	}
-
-	/**
-	 * UserId Getter
-	 *
-	 * @return object UserId
-	 */
-	public function getUserId () : UserId
-	{
-		return $this->userId;
-	}
-
-	/**
-	 * Action Setter
-	 *
-	 * @param int $ac
-	 */
-	public function setAction ( int $ac )
-	{
-		$this->action = new Action ( $ac );
-	}
-
-	/**
-	 * Action Getter
-	 *
-	 * @return object ACtion
-	 */
-	public function getAction () : Action
-	{
-		return $this->action;
-	}
-
-	/**
 	 * Get User Following
 	 *
 	 * @return array
@@ -203,9 +164,14 @@ class Relation implements RelationInterface
 	 *
 	 * @return array
 	 */
-	public function getRelation () : array
+	public function getRelation ( UserId $userId ) : array
 	{
-		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $this->userId, $this->accessToken );
+		if ( false == ( $userId instanceof UserId ) )
+		{
+			throw new RelationException ( "Current param isn't instance of UserId." );
+		}
+
+		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $userId->__toInt (), $this->accessToken );
 
 		$request = $this->requestFactory->createRequest ( "GET", $uri );
 
@@ -224,16 +190,23 @@ class Relation implements RelationInterface
 	/**
 	 * Change user Relationship
 	 *
+	 * @param object UserId $userId
+	 * @param object Action $action
 	 * @return array
 	 */
-	public function changeRelation ( Action $action ) : array
+	public function changeRelation ( UserId $userId, Action $action ) : array
 	{
 		if ( false == ( $action instanceof Action ) )
 		{
 			throw new RelationException ( "Current param isn't instance of Action." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $this->userId, $this->accessToken );
+		if ( false == ( $userId instanceof UserId ) )
+		{
+			throw new RelationException ( "Current param isn't instance of UserId." );
+		}
+
+		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $userId->__toInt (), $this->accessToken );
 
 		$this->builder->addResource ( "action", $action );
 

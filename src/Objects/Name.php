@@ -21,7 +21,7 @@ class Name
 	 */
 	public function __construct ( string $n )
 	{
-		$this->mediaId = $n;
+		$this->name = $n;
 	}
 
 	/**

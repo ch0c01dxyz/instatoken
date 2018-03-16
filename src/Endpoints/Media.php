@@ -10,6 +10,7 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
 use Ch0c01dxyz\InstaToken\Objects\AccessToken;
 use Ch0c01dxyz\InstaToken\Objects\MediaId;
+use Ch0c01dxyz\InstaToken\Objects\ShortCode;
 use Ch0c01dxyz\InstaToken\Objects\Map;
 use Ch0c01dxyz\InstaToken\Interfaces\MediaInterface;
 use Ch0c01dxyz\InstaToken\Exceptions\MediaException;
