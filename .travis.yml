@@ -1,4 +1,7 @@
 language: php
+
 php:
-	- '7.0'
-	- nightly
+  - 7.0
+  - nightly
+
+script: phpunit --configuration phpunit.xml --coverage-text
