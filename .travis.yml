@@ -1,7 +1,23 @@
 language: php
+dist: precise
 
 php:
   - 7.0
-  - nightly
+  - 7.1
+  - 7.2
+  - master
 
-script: phpunit --configuration phpunit.xml --coverage-text
+sudo: false
+
+before_script:
+  - sh -c "composer install --dev --no-progress"
+
+script: php -d zend.enable_gc=0 -d date.timezone=Asia/Jakarta -d mbstring.func_overload=7 -d mbstring.internal_encoding=UTF-8 vendor/bin/phpunit --coverage-text --configuration phpunit.xml
+
+matrix:
+  allow_failures:
+    - php: master
+
+branches:
+  only:
+    - master
