@@ -265,11 +265,11 @@ $myRelation->setToken ( "USER_APP_TOKEN" );
 $userId = new Ch0c01dxyz\InstaToken\Objects\UserId ( "ID_OF_USER" );
 
 // List Action
-// 0: Follow
-// 1: Unfollow
-// 2: Approve
-// 3: Ignore
-$action = new Ch0c01dxyz\InstaToken\Objects\Action ( 0 );
+// - Follow
+// - Unfollow
+// - Approve
+// - Ignore
+$action = new Ch0c01dxyz\InstaToken\Objects\Action ( "follow" );
 
 print_r ( $myRelation->changeRelation ( $userId, $action ) );
 ```
