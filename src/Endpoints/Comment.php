@@ -97,7 +97,7 @@ class Comment implements CommentInterface
 		{
 			$body = json_decode ( ( string ) $response->getBody () );
 
-			throw new InstagramException ( $body->meta->error_message );
+			throw new CommentException ( $body->meta->error_message );
 		}
 
 		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
@@ -120,7 +120,7 @@ class Comment implements CommentInterface
 			throw new CommentException ( "Comment required." );
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments", $mediaId );
+		$uri = sprintf ( "https://api.instagram.com/v1/media/%s/comments", $mediaId->__toString () );
 
 		$this->builder->addResource ( "access_token", $this->accessToken );
 		$this->builder->addResource ( "text", $comment );
