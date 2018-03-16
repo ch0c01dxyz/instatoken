@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1521186522">
-  <project timestamp="1521186522">
+<coverage generated="1521187309">
+  <project timestamp="1521187309">
     <package name="Ch0c01dxyz\InstaToken\Endpoints">
       <file name="/Volumes/B/myrepo/instatoken/src/Endpoints/Comment.php">
         <class name="Ch0c01dxyz\InstaToken\Endpoints\Comment" namespace="Ch0c01dxyz\InstaToken\Endpoints">
