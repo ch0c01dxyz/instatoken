@@ -1,13 +1,16 @@
 <?php
 
-declare ( strict_types = 1 );
+declare (strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
+use Ch0c01dxyz\InstaToken\Builder\MapBuilderInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class Map
+class Map implements ObjectInterface
 {
 	/**
 	 * @var Map
@@ -17,56 +20,77 @@ class Map
 	/**
 	 * Map constructor
 	 *
-	 * @param float $lat
-	 * @param float $lng
-	 * @param float $distance
+	 * @param MapBuilderInterface $map
 	 */
-	public function __construct ( float $lat, float $lng, int $distance )
+	public function __construct(MapBuilderInterface $map)
 	{
-		$this->map = [
-			"lat" => ( float ) $lat,
-			"lng" => ( float ) $lng,
-			"distance" => ( int ) $distance
-		];
+		$this->map = $map;
 	}
 
 	/**
-	 * @return float Latitude
+	 * For chainability purpose.
 	 */
-	public function getLat () : float
+	public static function create()
 	{
-		return $this->map[ "lat" ];
+		return new static(new Ch0c01dxyz\InstaToken\Builder\MapBuilder());
 	}
 
 	/**
-	 * @return float Longitude
+	 * Get map latitude.
+	 *
+	 * @return float
+	 * @throws \RuntimeException
 	 */
-	public function getLng () : float
+	public function getLatitude(): float
 	{
-		return $this->map[ "lng" ];
+		return $this->map->getLatitude();
 	}
 
 	/**
-	 * @return int Distance
+	 * Get map longitude.
+	 *
+	 * @return float
+	 * @throws \RuntimeException
 	 */
-	public function getDistance () : int
+	public function getLongitude(): float
 	{
-		return $this->map[ "distance" ];
+		return $this->map->getLongitude();
 	}
 
 	/**
-	 * @return string
+	 * Get map distance.
+	 *
+	 * @return integer
+	 * @throws \RuntimeException
 	 */
-	public function __toString () : string
+	public function getDistance(): int
 	{
-		return implode( ",", $this->map );
+		return $this->map->getDistance();
 	}
 
 	/**
-	 * @return array
+	 * {@inheritdoc}
 	 */
-	public function __toArray () : array
+	public function get(): string
+	{
+		return json_encode($this->map->build(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	}
+
+	/**
+	 * Get map builder instance.
+	 *
+	 * @return MapBuilderInterface
+	 */
+	public function getMap()
 	{
 		return $this->map;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

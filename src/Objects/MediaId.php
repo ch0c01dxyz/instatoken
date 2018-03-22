@@ -1,34 +1,52 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class MediaId
+class MediaId implements ObjectInterface
 {
 	/**
-	 * @var mediaId
+	 * @var string
 	 */
-	protected $mediaId;
+	protected $id;
 
 	/**
 	 * Media ID constructor
 	 *
-	 * @param string $mediaId
+	 * @param string $id
 	 */
-	public function __construct ( string $mediaId )
+	public function __construct(string $id = null)
 	{
-		$this->mediaId = $mediaId;
+		$this->id = $id;
 	}
 
 	/**
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	public function __toString () : string
+	public function set($value)
 	{
-		return $this->mediaId;
+		$this->id = $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get(): string
+	{
+		return $this->id;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

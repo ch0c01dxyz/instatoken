@@ -1,34 +1,52 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class UserId
+class UserId implements ObjectInterface
 {
 	/**
-	 * @var userId
+	 * @var integer
 	 */
 	protected $userId;
 
 	/**
 	 * UserId Constructor
 	 *
-	 * @param int
+	 * @param integer $id
 	 */
-	public function __construct ( int $uid )
+	public function __construct(int $id)
 	{
-		$this->userId = $uid;
+		$this->id = $id;
 	}
 
 	/**
-	 * @return int
+	 * {@inheritdoc}
 	 */
-	public function __toInt () : int
+	public function set($value)
 	{
-		return $this->userId;
+		$this->id = $value;
+	}
+	
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get(): string
+	{
+		return (string)$this->id;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

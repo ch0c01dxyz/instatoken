@@ -1,13 +1,15 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class Action
+class Action implements ObjectInterface
 {
 	/**
 	 * @var action
@@ -17,17 +19,25 @@ class Action
 	/**
 	 * Action constructor
 	 *
-	 * @param string $ac
+	 * @param string $action
 	 */
-	public function __construct ( string $action )
+	public function __construct(string $action)
 	{
 		$this->action = $action;
 	}
 
 	/**
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	public function __toString () : string
+	public function get()
+	{
+		return $this->action;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
 	{
 		return $this->action;
 	}

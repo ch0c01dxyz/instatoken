@@ -1,34 +1,52 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class CommentId
+class CommentId implements ObjectInterface
 {
 	/**
-	 * @var commentId
+	 * @var integer
 	 */
-	protected $commentId;
+	protected $id;
 
 	/**
 	 * Comment ID constructor
 	 *
-	 * @param int $cid
+	 * @param integer $id
 	 */
-	public function __construct ( int $cid )
+	public function __construct(int $id)
 	{
-		$this->commentId = $cid;
+		$this->id = $id;
 	}
 
 	/**
-	 * @return int
+	 * {@inheritdoc}
 	 */
-	public function __toInt () : int
+	public function set($value)
 	{
-		return $this->commentId;
+		$this->id = $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get(): string
+	{
+		return (string)$this->id;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

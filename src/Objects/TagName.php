@@ -1,34 +1,52 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class TagName
+class TagName implements ObjectInterface
 {
 	/**
-	 * @var tagName
+	 * @var string
 	 */
-	protected $tagName;
+	protected $tag;
 
 	/**
 	 * Tag Name constructor
 	 *
-	 * @param string $tn
+	 * @param string $tag
 	 */
-	public function __construct ( string $tn )
+	public function __construct(string $tag)
 	{
-		$this->tagName = $tn;
+		$this->tag = $tag;
 	}
 
 	/**
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	public function __toString () : string
+	public function set($value)
 	{
-		return $this->tagName;
+		$this->tag = $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get(): string
+	{
+		return $this->tag;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

@@ -1,39 +1,44 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class LocationId
+class LocationId implements ObjectInterface
 {
 	/**
-	 * @var locationId
+	 * @var integer
 	 */
-	protected $locationId;
+	protected $id;
 
 	/**
 	 * Location ID constructor
 	 *
-	 * @param int $lid
+	 * @param integer $id
 	 */
-	public function __construct ( int $lid )
+	public function __construct(int $id)
 	{
-		$this->locationId = $lid;
+		$this->id = $id;
 	}
 
 	/**
-	 * @return int
+	 * {@inheritdoc}
 	 */
-	public function __toInt () : int
+	public function get()
 	{
-		return $this->locationId;
+		return $this->id;
 	}
 
-	public function __toString () : string
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString()
 	{
-		return ( string ) $this->locationId;
+		return (string)$this->get();
 	}
 }

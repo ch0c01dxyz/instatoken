@@ -1,34 +1,52 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class ShortCode
+class ShortCode implements ObjectInterface
 {
 	/**
-	 * @var shortCode
+	 * @var string
 	 */
-	protected $shortCode;
+	protected $code;
 
 	/**
 	 * Short Code constructor
 	 *
-	 * @param string $sc
+	 * @param string $code
 	 */
-	public function __construct ( string $sc )
+	public function __construct(string $code)
 	{
-		$this->shortCode = $sc;
+		$this->code = $code;
 	}
 
 	/**
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	public function __toString () : string
+	public function set($value)
 	{
-		return $this->shortCode;
+		$this->code = $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get(): string
+	{
+		return $this->code;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }

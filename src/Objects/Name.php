@@ -1,34 +1,44 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Objects;
+
+use Ch0c01dxyz\InstaToken\ObjectInterface;
 
 /**
  * @author Egar Rizki <ch0c01d.xyz@gmail.com>
  */
-class Name
+class Name implements ObjectInterface
 {
 	/**
-	 * @var name
+	 * @var string
 	 */
 	protected $name;
 
 	/**
 	 * Name constructor
 	 *
-	 * @param string $n
+	 * @param string $name
 	 */
-	public function __construct ( string $n )
+	public function __construct(string $name)
 	{
-		$this->name = $n;
+		$this->name = $name;
 	}
 
 	/**
-	 * @return string
+	 * {@inheritdoc}
 	 */
-	public function __toString () : string
+	public function get(): string
 	{
 		return $this->name;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function __toString(): string
+	{
+		return $this->get();
 	}
 }
