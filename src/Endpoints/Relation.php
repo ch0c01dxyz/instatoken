@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare (strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Endpoints;
 
@@ -9,6 +9,8 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
+use Ch0c01dxyz\InstaToken\Builder\Endpoint\Relationship;
+use Ch0c01dxyz\InstaToken\Auth\TokenAccessorTrait;
 use Ch0c01dxyz\InstaToken\Objects\AccessToken;
 use Ch0c01dxyz\InstaToken\Objects\UserId;
 use Ch0c01dxyz\InstaToken\Objects\Action;
@@ -20,10 +22,7 @@ use Ch0c01dxyz\InstaToken\Exceptions\RelationException;
  */
 class Relation implements RelationInterface
 {
-	/**
-	 * @var \Ch0c01dxyz\InstaToken\Objects\AccessToken
-	 */
-	protected $accessToken;
+	use TokenAccessorTrait, EndpointTrait;
 
 	/**
 	 * @var \Ch0c01dxyz\InstaToken\Objects\UserId
@@ -61,33 +60,15 @@ class Relation implements RelationInterface
 	 * @param \Http\Client\HttpClient|null $httpClient
 	 * @param \Http\Message\RequestFactory|null $requestFactory
 	 */
-	public function __construct ( HttpClient $httpClient = null, RequestFactory $requestFactory = null )
-	{
-		$this->httpClient = $httpClient ?: HttpClientDiscovery::find ();
-
-		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find ();
-
-		$this->builder = new MultipartStreamBuilder ();
-	}
-
-	/**
-	 * Access Token Setter
-	 *
-	 * @param string $token
-	 */
-	public function setToken ( $token )
-	{
-		$this->accessToken = new AccessToken ( $token );
-	}
-
-	/**
-	 * Access Token Getter
-	 *
-	 * @return object AccessToken
-	 */
-	public function getToken () : AccessToken
-	{
-		return $this->accessToken;
+	public function __construct(
+		HttpClient $httpClient = null,
+		RequestFactory $requestFactory = null,
+		AccessToken $token = null
+	) {
+		$this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
+		$this->builder = new MultipartStreamBuilder();
+		$this->token = $token ?: new AccessToken();
 	}
 
 	/**
@@ -95,22 +76,32 @@ class Relation implements RelationInterface
 	 *
 	 * @return array
 	 */
-	public function getFollow () : array
+	public function getFollow() : array
 	{
-		$uri = sprintf ( "https://api.instagram.com/v1/users/self/follows?access_token=%s", $this->accessToken );
+		$endpoint = (new Relationship)
+			->withUsers()
+			->withSelf()
+			->withFollows();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", (string)$uri);
+		$response = $this->httpClient->sendRequest($request);
 
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
 
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new RelationException ( $body->meta->error_message );
+			throw new RelationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -118,22 +109,32 @@ class Relation implements RelationInterface
 	 *
 	 * @return array
 	 */
-	public function getFollowedBy () : array
+	public function getFollowedBy(): array
 	{
-		$uri = sprintf ( "https://api.instagram.com/v1/users/self/followed-by?access_token=%s", $this->accessToken );
+		$endpoint = (new Relationship)
+			->withUsers()
+			->withSelf()
+			->withFollowedBy();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
 
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
 
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new RelationException ( $body->meta->error_message );
+			throw new RelationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -141,22 +142,32 @@ class Relation implements RelationInterface
 	 *
 	 * @return array
 	 */
-	public function getRequestedBy () : array
+	public function getRequestedBy(): array
 	{
-		$uri = sprintf ( "https://api.instagram.com/v1/users/self/requested-by?access_token=%s", $this->accessToken );
+		$endpoint = (new Relationship)
+			->withUsers()
+			->withSelf()
+			->withRequestedBy();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", (string)$uri);
+		$response = $this->httpClient->sendRequest($request);
 
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
 
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new RelationException ( $body->meta->error_message );
+			throw new RelationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -164,27 +175,32 @@ class Relation implements RelationInterface
 	 *
 	 * @return array
 	 */
-	public function getRelation ( UserId $userId ) : array
+	public function getRelation(UserId $userId): array
 	{
-		if ( false === ( $userId instanceof UserId ) )
-		{
-			throw new RelationException ( "Current param isn't instance of UserId." );
+		$endpoint = (new Relationship)
+			->withUsers()
+			->withUserId((string)$userId)
+			->withRelationship();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new RelationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $userId->__toInt (), $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new RelationException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -196,33 +212,42 @@ class Relation implements RelationInterface
 	 */
 	public function changeRelation ( UserId $userId, Action $action ) : array
 	{
-		if ( false === ( $action instanceof Action ) )
-		{
-			throw new RelationException ( "Current param isn't instance of Action." );
-		}
+		$endpoint = (new Relationship)
+			->withUsers()
+			->withUserId((string)$userId)
+			->withRelationship();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
 
-		if ( false === ( $userId instanceof UserId ) )
-		{
-			throw new RelationException ( "Current param isn't instance of UserId." );
-		}
+		$this->builder->addResource("action", (string)$action);
 
-		$uri = sprintf ( "https://api.instagram.com/v1/users/%s/relationship?access_token=%s", $userId->__toInt (), $this->accessToken );
-
-		$this->builder->addResource ( "action", $action );
-
-		$request = $this->requestFactory->createRequest ( "POST", $uri, [
-			"Content-Type" => 'multipart/form-data; boundary="' . $this->builder->getBoundary () . '"'
-		], ( string ) $this->builder->build () );
-
+		$request = $this->requestFactory->createRequest(
+			"POST",
+			(string)$uri,
+			[
+				"Content-Type" => sprintf(
+					'multipart/form-data; boundary="%s"',
+					$this->builder->getBoundary()
+				)
+			],
+			(string)$this->builder->build()
+		);
 		$response = $this->httpClient->sendRequest ( $request );
 
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
 
-			throw new RelationException ( $body->meta->error_message );
+			throw new RelationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 }

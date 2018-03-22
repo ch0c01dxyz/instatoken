@@ -1,13 +1,17 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Endpoints;
 
+use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
+use Ch0c01dxyz\InstaToken\Builder\Endpoint\OAuth2;
+use Ch0c01dxyz\InstaToken\Builder\CredentialBuilder;
+use Ch0c01dxyz\InstaToken\Builder\CredentialBuilderInterface;
 use Ch0c01dxyz\InstaToken\Interfaces\LoginInterface;
 use Ch0c01dxyz\InstaToken\Exceptions\LoginException;
 
@@ -16,30 +20,12 @@ use Ch0c01dxyz\InstaToken\Exceptions\LoginException;
  */
 class Login implements LoginInterface
 {
+	use EndpointTrait;
+	
 	/**
-	 * @var [type]
+	 * @var CredentialBuilderInterface
 	 */
-	protected $appId;
-
-	/**
-	 * @var [type]
-	 */
-	protected $appSecret;
-
-	/**
-	 * @var [type]
-	 */
-	protected $appCallback;
-
-	/**
-	 * @var [type]
-	 */
-	protected $appScope;
-
-	/**
-	 * @var [type]
-	 */
-	protected $responseCode;
+	private $cred;
 
 	/**
 	 * @var [type]
@@ -65,37 +51,14 @@ class Login implements LoginInterface
 	 * @param \Http\Client\HttpClient|null $httpClient
 	 * @param \Http\Message\RequestFactory|null $requestFactory
 	 */
-	public function __construct ( string $appId, string $appSecret, string $appCallback, string $appScope, HttpClient $httpClient = null, RequestFactory $requestFactory = null )
-	{
-		$this->appId = ( string ) $appId;
-
-		$this->appSecret = ( string ) $appSecret;
-
-		$this->appCallback = ( string ) $appCallback;
-
-		$this->appScope = ( string ) $appScope;
-
-		$this->httpClient = $httpClient ?: HttpClientDiscovery::find ();
-
-		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find ();
-	}
-
-	/**
-	 * Get URL Login redirect Instagram
-	 */
-	public function getLogin () : string
-	{
-		if ( empty ( $this->appId ) )
-		{
-			throw new LoginException ( "AppID required." );
-		}
-
-		if ( empty ( $this->appScope ) )
-		{
-			throw new LoginException ( "AppScope required." );
-		}
-
-		return "https://api.instagram.com/oauth/authorize/?client_id=" . $this->appId . "&redirect_uri=" . $this->appCallback . "&response_type=code" . "&scope=" . $this->appScope;
+	public function __construct(
+		HttpClient $httpClient = null,
+		RequestFactory $requestFactory = null,
+		CredentialBuilderInterface $cred
+	) {
+		$this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
+		$this->cred = $cred ?: new CredentialBuilderInterface();
 	}
 
 	/**
@@ -103,34 +66,51 @@ class Login implements LoginInterface
 	 *
 	 * param string $code
 	 */
-	public function doAuth ( string $code ) : array
+	public function doAuth(string $code): array
 	{
-		if ( empty ( $code ) )
-		{
-			throw new LoginException ( "Code required." );
+		if (!$code) {
+			throw new LoginException(
+				"Code required."
+			);
 		}
 
-		$uri = "https://api.instagram.com/oauth/access_token";
+		$endpoint = (new OAuth2)
+			->withOAuth()
+			->withAccessToken();
+		$uri = new Uri((string)$endpoint);
 
-		$this->builder->addResource ( "client_id", $this->appId );
-		$this->builder->addResource ( "client_secret", $this->appSecret );
-		$this->builder->addResource ( "grant_type", "authorization_code" );
-		$this->builder->addResource ( "redirect_uri", $this->appCallback );
-		$this->builder->addResource ( "code", $code );
+		$this->builder->addResource("client_id", $this->cred->getAppID());
+		$this->builder->addResource("client_secret", $this->cred->getAppSecret());
+		$this->builder->addResource("grant_type", "authorization_code");
+		$this->builder->addResource("redirect_uri", $this->cred->getAppCallback());
+		$this->builder->addResource("code", $code);
 
-		$request = $this->requestFactory->createRequest ( "POST", $uri, [
-			"Content-Type" => 'multipart/form-data; boundary="' . $this->builder->getBoundary () . '"'
-		], ( string ) $this->builder->build () );
+		$request = $this->requestFactory->createRequest(
+			"POST",
+			$uri,
+			[
+				"Content-Type" => sprintf(
+					'multipart/form-data; boundary="%s"',
+					$this->builder->getBoundary()
+				)
+			],
+			(string)$this->builder->build()
+		);
+		$response = $this->httpClient->sendRequest($request);
 
-		$response = $this->httpClient->sendRequest ( $request );
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
 
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new LoginException ( $body->meta->error_message );
+			throw new LoginException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 }

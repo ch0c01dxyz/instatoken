@@ -1,13 +1,16 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Endpoints;
 
+use GuzzleHttp\Psr7\Uri;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
+use Ch0c01dxyz\InstaToken\Auth\TokenAccessorTrait;
+use Ch0c01dxyz\InstaToken\Builder\Location;
 use Ch0c01dxyz\InstaToken\Objects\AccessToken;
 use Ch0c01dxyz\InstaToken\Objects\LocationId;
 use Ch0c01dxyz\InstaToken\Objects\Map;
@@ -19,10 +22,7 @@ use Ch0c01dxyz\InstaToken\Exceptions\LocationException;
  */
 class Location implements LocationInterface
 {
-	/**
-	 * @var \Ch0c01dxyz\InstaToken\Objects\AccessToken
-	 */
-	protected $accessToken;
+	use TokenAccessorTrait, EndpointTrait;
 
 	/**
 	 * @var \Http\Client\HttpClient
@@ -40,31 +40,14 @@ class Location implements LocationInterface
 	 * @param \Http\Client\HttpClient|null $httpClient
 	 * @param \Http\Message\RequestFactory|null $requestFactory
 	 */
-	public function __construct ( HttpClient $httpClient = null, RequestFactory $requestFactory = null )
-	{
-		$this->httpClient = $httpClient ?: HttpClientDiscovery::find ();
-
-		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find ();
-	}
-
-	/**
-	 * Access Token Setter
-	 *
-	 * @param string $token
-	 */
-	public function setToken ( string $token )
-	{
-		$this->accessToken = new AccessToken ( $token );
-	}
-
-	/**
-	 * Access Token Getter
-	 *
-	 * @return object AccessToken
-	 */
-	public function getToken () : AccessToken
-	{
-		return $this->accessToken;
+	public function __construct(
+		HttpClient $httpClient = null,
+		RequestFactory $requestFactory = null,
+		AccessToken $token = null
+	) {
+		$this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
+		$this->token = $token ?: new AccessToken;
 	}
 
 	/**
@@ -72,27 +55,31 @@ class Location implements LocationInterface
 	 *
 	 * @return array
 	 */
-	public function infoLocation ( LocationId $locationId ) : array
+	public function infoLocation(LocationId $locationId): array
 	{
-		if ( false === ( $locationId instanceof LocationId ) )
-		{
-			throw new LocationException ( "Current param isn't instance of LocationId." );
+		$endpoint = (new Comment)
+			->withLocations()
+			->withLocationId((string)$locationId);
+		$token = sprintf("access_token=%s", $this->getAccessToken());
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest ($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new LocationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/locations/%s?access_token=%s", $locationId, $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new LocationException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -100,27 +87,33 @@ class Location implements LocationInterface
 	 *
 	 * @return array
 	 */
-	public function listMediaLocation ( LocationId $locationId ) : array
+	public function listMediaLocation(LocationId $locationId): array
 	{
-		if ( false === ( $locationId instanceof LocationId ) )
-		{
-			throw new LocationException ( "Current param isn't instce of LocationId." );
+		$endpoint = (new Location)
+			->withLocations()
+			->withLocationId((string)$locationId)
+			->withMedia()
+			->withRecent();
+		$token = sprintf("access_token=%s", $this->getAccessToken());
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new LocationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/locations/%s/media/recent?access_token=%s", $locationId, $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new LocationException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -128,26 +121,36 @@ class Location implements LocationInterface
 	 *
 	 * @return array
 	 */
-	public function searchLocation ( Map $map ) : array
+	public function searchLocation(Map $map): array
 	{
-		if ( false === ( $map instanceof Map ) )
-		{
-			throw new LocationException ( "Current param isn't instance of Map." );
+		$endpoint = (new Location)
+			->withLocations()
+			->withSearch();
+		$query = sprintf(
+			"lat=%s&lng=%s&distance=%s&access_token=%s",
+			$map->getLatitude(),
+			$map->getLongitude(),
+			$map->getDistance(),
+			$this->getAccessToken()
+		);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($query);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new LocationException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/locations/search?lat=%s&lng=%s&distance=%s&access_token=%s", $map->getLat (), $map->getLng (), $map->getDistance (), $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new LocationException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 }

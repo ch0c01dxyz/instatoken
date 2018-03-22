@@ -1,6 +1,6 @@
 <?php
 
-declare ( strict_types = 1 );
+declare(strict_types = 1);
 
 namespace Ch0c01dxyz\InstaToken\Endpoints;
 
@@ -8,6 +8,8 @@ use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
+use Ch0c01dxyz\InstaToken\Auth\TokenAccessorTrait;
+use Ch0c01dxyz\InstaToken\Builder\Endpoint\Tag;
 use Ch0c01dxyz\InstaToken\Objects\AccessToken;
 use Ch0c01dxyz\InstaToken\Objects\TagName;
 use Ch0c01dxyz\InstaToken\Interfaces\TagInterface;
@@ -18,10 +20,7 @@ use Ch0c01dxyz\InstaToken\Exceptions\TagException;
  */
 class Tag implements TagInterface
 {
-	/**
-	 * @var \Ch0c01dxyz\InstaToken\AccessToken
-	 */
-	protected $accessToken;
+	use TokenAccessorTrait, EndpointTrait;
 
 	/**
 	 * @var \Http\Client\HttpClient
@@ -39,27 +38,14 @@ class Tag implements TagInterface
 	 * @param \Http\Client\HttpClient|null $httpClient
 	 * @param \Http\Message\RequestFactory|null $requestFactory
 	 */
-	public function __construct ( HttpClient $httpClient = null, RequestFactory $requestFactory = null )
-	{
-		$this->httpClient = $httpClient ?: HttpClientDiscovery::find ();
-
-		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find ();
-	}
-
-	/**
-	 * @param Access Token Setter
-	 */
-	public function setToken ( $token )
-	{
-		$this->accessToken = new AccessToken ( $token );
-	}
-
-	/**
-	 * @return Access Token Getter
-	 */
-	public function getToken () : AccessToken
-	{
-		return $this->accessToken;
+	public function __construct(
+		HttpClient $httpClient = null,
+		RequestFactory $requestFactory = null,
+		AccessToken $token = null
+	) {
+		$this->httpClient = $httpClient ?: HttpClientDiscovery::find();
+		$this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
+		$this->token = $token ?: new AccessToken();
 	}
 
 	/**
@@ -68,27 +54,31 @@ class Tag implements TagInterface
 	 * @param string $tagName
 	 * @return array
 	 */
-	public function listTag ( TagName $tagName ) : array
+	public function listTag(TagName $tagName): array
 	{
-		if ( false === ( $tagName instanceof TagName ) )
-		{
-			throw new TagException ( "Current param isn't instance of TagName." );
+		$endpoint = (new Tag)
+			->withTags()
+			->withTagName((string)$tagName);
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new TagException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/tags/%s?access_token=%s", $tagName, $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new TagException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -97,27 +87,33 @@ class Tag implements TagInterface
 	 * @param string $tagName
 	 * @return array
 	 */
-	public function infoTag ( TagName $tagName ) : array
+	public function infoTag(TagName $tagName): array
 	{
-		if ( false === ( $tagName instanceof TagName ) )
-		{
-			throw new TagException ( "Current param isn't instance of TagName." );
+		$endpoint = (new Tag)
+			->withTags()
+			->withTagName((string)$tagName)
+			->withMedia()
+			->withRecent();
+		$token = \Ch0c01dxyz\InstaToken\buildURLQuery(['access_token' => $this->getAccessToken()]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($token);
+		$request = $this->requestFactory->createRequest("GET", $uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new TagException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/tags/%s/media/recent?access_token=%s", $tagName, $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new TagException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 
 	/**
@@ -126,26 +122,33 @@ class Tag implements TagInterface
 	 * @param string $tagName
 	 * @return array
 	 */
-	public function searchTag ( TagName $tagName ) : array
+	public function searchTag(TagName $tagName): array
 	{
-		if ( false === ( $tagName instanceof TagName ) )
-		{
-			throw new TagException ( "Current param isn't instance of TagName." );
+		$endpoint = (new Tag)
+			->withTags()
+			->withSearch();
+		$query = \Ch0c01dxyz\InstaToken\buildURLQuery([
+			'q' => (string)$tagName,
+			'access_token' => $this->getAccessToken()
+		]);
+		$uri = (new Uri((string)$endpoint))
+			->withQuery($query);
+		$request = $this->requestFactory->createRequest("GET", (string)$uri);
+		$response = $this->httpClient->sendRequest($request);
+
+		if ($response->getStatusCode() === 400) {
+			$body = $this->restoreFromJson(
+				(string)$response->getBody()
+			);
+
+			throw new TagException(
+				sprintf("%s", $body->meta->error_message)
+			);
 		}
 
-		$uri = sprintf ( "https://api.instagram.com/v1/tags/search?q=%s&access_token=%s", $tagName, $this->accessToken );
-
-		$request = $this->requestFactory->createRequest ( "GET", $uri );
-
-		$response = $this->httpClient->sendRequest ( $request );
-
-		if ( $response->getStatusCode () === 400 )
-		{
-			$body = json_decode ( ( string ) $response->getBody () );
-
-			throw new TagException ( $body->meta->error_message );
-		}
-
-		return json_decode ( ( string ) $response->getBody ()->getContents (), true );
+		return $this->restoreFromJson(
+			(string)$response->getBody(),
+			true
+		);
 	}
 }
